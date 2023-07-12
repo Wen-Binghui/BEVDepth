@@ -2,7 +2,8 @@ import unittest
 
 import numpy as np
 import torch
-
+import sys, os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.curdir)))
 from bevdepth.datasets.nusc_det_dataset import NuscDetDataset
 
 CLASSES = [
