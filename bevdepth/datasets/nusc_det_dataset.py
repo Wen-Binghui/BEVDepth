@@ -373,7 +373,7 @@ class NuscDetDataset(Dataset):
                               axis=1).astype(np.float32)
 
 
-    def get_raw_info(self, cam_infos, cams, lidar_infos=None):
+    def get_raw_info(self, cam_infos, cams, lidar_infos=None, return_lidar = False):
         """Given data and cam_names, return image data needed.
 
         Args:
@@ -535,6 +535,9 @@ class NuscDetDataset(Dataset):
         ]
         if self.return_depth:
             ret_list.append(torch.stack(sweep_lidar_depth).permute(1, 0, 2, 3))
+        if return_lidar:
+            ret_list.append(sweep_lidar_points)
+            
         return ret_list
 
 
@@ -864,6 +867,7 @@ class NuscDetDataset(Dataset):
         lidar_infos = list()
         # TODO: Check if it still works when number of cameras is reduced.
         cams = self.choose_cams()
+
         for key_idx in self.key_idxes:
             cur_idx = key_idx + idx
             # Handle scenarios when current idx doesn't have previous key
@@ -901,11 +905,8 @@ class NuscDetDataset(Dataset):
                                                cam_timestamp).argmin()
                             lidar_infos.append(info['lidar_sweeps'][lidar_idx])
                             break
-        if self.return_depth or self.use_fusion:
-            image_data_list = self.get_raw_info(cam_infos, cams, lidar_infos)
+        image_data_list = self.get_raw_info(cam_infos, cams, lidar_infos, return_lidar=True)
 
-        else:
-            image_data_list = self.get_raw_info(cam_infos, cams)
         ret_list = list()
         (
             sweep_imgs,
@@ -942,10 +943,13 @@ class NuscDetDataset(Dataset):
             img_metas,
             gt_boxes,
             gt_labels,
+            image_data_list[7], #depth
+            image_data_list[8] # lidar
         ]
-        if self.return_depth:
-            ret_list.append(image_data_list[7])
-        return ret_list
+        sample_token = self.infos[cur_idx]['sample_token']
+        scene_token = self.infos[cur_idx]['scene_token']
+        log_location = self.infos[cur_idx]['log_location']
+        return ret_list, dict(sample_token=sample_token, scene_token=scene_token, log_location=log_location)
 
 
     def __str__(self):

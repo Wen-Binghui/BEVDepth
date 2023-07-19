@@ -1,6 +1,7 @@
 import numpy as np
 
-def depthImg2scatter(dep_np: np.ndarray):
+def depthImg2scatter(dep_np: np.ndarray) -> np.ndarray:
+    # 
     dim = dep_np.shape
     X, Y = np.meshgrid(np.arange(dim[0]), np.arange(dim[1]), indexing='ij')
     X = np.reshape(X, (-1,1))
@@ -11,3 +12,5 @@ def depthImg2scatter(dep_np: np.ndarray):
 
 
     return point_set
+
+# def lidar_point_cutoff()

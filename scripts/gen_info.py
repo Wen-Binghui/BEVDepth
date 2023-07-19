@@ -5,11 +5,13 @@ from nuscenes.utils import splits
 from tqdm import tqdm
 import mmengine
 
-def generate_info(nusc, scenes, max_cam_sweeps=6, max_lidar_sweeps=10):
+def generate_info(nusc, scenes:list, max_cam_sweeps=6, max_lidar_sweeps=10):
     infos = list()
     for cur_scene in tqdm(nusc.scene):
         if cur_scene['name'] not in scenes:
             continue
+        log_record = nusc.get('log', cur_scene['log_token'])
+        log_location = log_record['location']
         first_sample_token = cur_scene['first_sample_token']
         cur_sample = nusc.get('sample', first_sample_token)
         while True:
@@ -17,6 +19,7 @@ def generate_info(nusc, scenes, max_cam_sweeps=6, max_lidar_sweeps=10):
             sweep_cam_info = dict()
             cam_datas = list()
             lidar_datas = list()
+            info['log_location'] = log_location
             info['sample_token'] = cur_sample['token']
             info['timestamp'] = cur_sample['timestamp']
             info['scene_token'] = cur_sample['scene_token']
@@ -150,12 +153,15 @@ def main():
     trainval_nusc = NuScenes(version='v1.0-trainval',
                              dataroot='./data/nuScenes/',
                              verbose=True)
-    train_scenes = splits.train
-    val_scenes = splits.val
+    train_scenes:list = splits.mini_train
+    val_scenes:list = splits.mini_val
     train_infos = generate_info(trainval_nusc, train_scenes)
     val_infos = generate_info(trainval_nusc, val_scenes)
     mmengine.dump(train_infos, './data/nuScenes/nuscenes_infos_train.pkl')
     mmengine.dump(val_infos, './data/nuScenes/nuscenes_infos_val.pkl')
+    mmengine.dump(train_infos, './data/nuScenes/nuscenes_infos_train.json', indent=4)
+    mmengine.dump(val_infos, './data/nuScenes/nuscenes_infos_val.json', indent=4)
+
     # test_nusc = NuScenes(version='v1.0-test',
     #                      dataroot='./data/nuScenes/',
     #                      verbose=True)
