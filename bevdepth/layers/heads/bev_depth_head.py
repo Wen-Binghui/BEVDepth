@@ -365,6 +365,7 @@ class BEVDepthHead(CenterHead):
             pred = pred.view(pred.size(0), -1, pred.size(3))
             pred = self._gather_feat(pred, ind)
             mask = masks[task_id].unsqueeze(2).expand_as(target_box).float()
+            #todo: erase WARNING: it is recommended to use sourceTensor.clone().detach() or sourceTensor.clone().detach().requires_grad_(True), rather than tensor.new_tensor(sourceTensor).
             num = torch.clamp(reduce_mean(target_box.new_tensor(num)),
                               min=1e-4).item()
             isnotnan = (~torch.isnan(target_box)).float()

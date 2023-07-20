@@ -397,7 +397,7 @@ class BEVDepthLightningModel(LightningModule):
         train_loader = torch.utils.data.DataLoader(
             train_dataset,
             batch_size=self.batch_size_per_device,
-            num_workers=4,
+            num_workers=8,
             drop_last=True,
             shuffle=False,
             collate_fn=partial(collate_fn,
