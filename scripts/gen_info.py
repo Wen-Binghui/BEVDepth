@@ -150,7 +150,7 @@ def generate_info(nusc, scenes:list, max_cam_sweeps=6, max_lidar_sweeps=10):
 
 
 def main():
-    trainval_nusc = NuScenes(version='v1.0-trainval',
+    trainval_nusc = NuScenes(version='v1.0-mini',
                              dataroot='./data/nuScenes/',
                              verbose=True)
     train_scenes:list = splits.mini_train
