@@ -36,7 +36,8 @@ def run_cli(model_class=BEVDepthLightningModel,
     parser.set_defaults(profiler='simple',
                         deterministic=False,
                         max_epochs=extra_trainer_config_args.get('epochs', 24),
-                        accelerator='cuda', #? ddp 是什么
+                        accelerator='cuda', # 原本是ddp, 版本原因分开了
+                        strategy="ddp",  # (DistributedDataParallel) 
                         num_sanity_val_steps=0,
                         gradient_clip_val=5,
                         limit_val_batches=0,
@@ -74,5 +75,5 @@ def run_cli(model_class=BEVDepthLightningModel,
                             [])[:len_dataset]
         model.evaluator._format_bbox(all_pred_results, all_img_metas,
                                      os.path.dirname(args.ckpt_path))
-    else:
+    else: #* 模型训练
         trainer.fit(model)

@@ -255,7 +255,7 @@ class BEVDepthLightningModel(LightningModule):
             detection_loss = self.model.loss(targets, preds)
 
         if len(depth_labels.shape) == 5:
-            # only key-frame will calculate depth loss
+            #! only key-frame will calculate depth loss
             depth_labels = depth_labels[:, 0, ...]
         depth_loss = self.get_depth_loss(depth_labels.cuda(), depth_preds)
         self.log('detection_loss', detection_loss)
@@ -266,7 +266,7 @@ class BEVDepthLightningModel(LightningModule):
         depth_labels = self.get_downsampled_gt_depth(depth_labels)
         depth_preds = depth_preds.permute(0, 2, 3, 1).contiguous().view(
             -1, self.depth_channels)
-        fg_mask = torch.max(depth_labels, dim=1).values > 0.0
+        fg_mask = torch.max(depth_labels, dim=1).values > 0.0 # mask掉深度小于0的值
 
         with autocast(enabled=False):
             depth_loss = (F.binary_cross_entropy(
