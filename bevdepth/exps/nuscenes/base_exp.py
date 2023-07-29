@@ -3,6 +3,7 @@ import os
 from functools import partial
 
 import mmcv
+import wandb
 import torch
 import torch.nn.functional as F
 import torch.nn.parallel
@@ -234,6 +235,24 @@ class BEVDepthLightningModel(LightningModule):
                                            'nuscenes_infos_val.pkl')
         self.predict_info_paths = os.path.join(self.data_root,
                                                'nuscenes_infos_test.pkl')
+        
+        wandb_config = self.hparams
+        wandb.init(
+            # set the wandb project where this run will be logged
+            project="BevDepth",
+            notes="My first experiment",
+            tags=["baseline", "paper1"],
+            group="experiment_1", 
+            job_type=f"exp@rank:{self.global_rank}",
+            # track hyperparameters and run metadata
+            config = wandb_config
+            # .update({
+            #     "learning_rate": self.basic_lr_per_img,
+            #     "architecture": "CNN",
+            #     "dataset": "nuScenes",
+            #     "batch_size": 128
+            # })
+        )
 
     def forward(self, sweep_imgs, mats):
         return self.model(sweep_imgs, mats)

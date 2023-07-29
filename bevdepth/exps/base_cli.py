@@ -77,3 +77,4 @@ def run_cli(model_class=BEVDepthLightningModel,
                                      os.path.dirname(args.ckpt_path))
     else: #* 模型训练
         trainer.fit(model)
+        # exit()
