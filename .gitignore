@@ -219,4 +219,7 @@ events.out.tfevents*
 .vim
 
 /data
+/data_mini
 /wandb
+/data_trainval
+/slurm_log
