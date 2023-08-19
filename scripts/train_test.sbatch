@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-task=4
 #SBATCH --cpus-per-task=16
-#SBATCH --gres=gpu:4,VRAM:16G
+#SBATCH --gres=gpu:4,VRAM:20G
 #SBATCH --mem=64G
 #SBATCH --time=48:00:00
 #SBATCH --mail-type=ALL
@@ -14,5 +14,5 @@
 #SBATCH --partition=NORMAL
 #SBATCH --comment="andy"
 
-
-/usr/wiss/lhao/anaconda3/envs/andy-mmcv-torch1.11.0/bin/python bevdepth/exps/nuscenes/mv/bev_depth_lss_r50_256x704_128x128_20e_cbgs_2key_da.py --amp_backend native -b 8 --gpus 1
+export GROUP_NAME_ANDY=bev_depth_lss_r50_256x704_128x128_24e_2key_testtest
+/usr/wiss/lhao/anaconda3/envs/andy-mmcv-torch1.11.0/bin/python bevdepth/exps/nuscenes/mv/bev_depth_lss_r50_256x704_128x128_24e_2key.py --amp_backend native -b 8 --gpus 4

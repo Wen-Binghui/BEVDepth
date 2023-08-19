@@ -235,14 +235,14 @@ class BEVDepthLightningModel(LightningModule):
                                            'nuscenes_infos_val.pkl')
         self.predict_info_paths = os.path.join(self.data_root,
                                                'nuscenes_infos_test.pkl')
-        
+        self.group = os.environ.get('GROUP_NAME_ANDY')
         wandb_config = self.hparams
         wandb.init(
             # set the wandb project where this run will be logged
-            project="BevDepth",
+            project="BevDepth_official",
             notes="My first experiment",
             tags=["baseline", "paper1"],
-            group="experiment_1", 
+            group=f"experiment_1_{self.group}", 
             job_type=f"exp@rank:{self.global_rank}",
             # track hyperparameters and run metadata
             config = wandb_config
@@ -279,6 +279,15 @@ class BEVDepthLightningModel(LightningModule):
         depth_loss = self.get_depth_loss(depth_labels.cuda(), depth_preds)
         self.log('detection_loss', detection_loss)
         self.log('depth_loss', depth_loss)
+        metrics = {f"detection_loss": detection_loss.item(), 
+                   f"depth_loss": depth_loss.item(),
+                   f"epoch": self.current_epoch,
+                   f"global_step": self.global_step          
+                  }
+
+        wandb.log(metrics)
+
+
         return detection_loss + depth_loss
 
     def get_depth_loss(self, depth_labels, depth_preds):
